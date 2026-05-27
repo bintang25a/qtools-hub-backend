@@ -8,7 +8,7 @@ const Asset = db.define("assets", {
     primaryKey: true,
   },
   class: {
-    type: DataTypes.STRING(2),
+    type: DataTypes.STRING(8),
     allowNull: false,
   },
   description: {
@@ -17,7 +17,11 @@ const Asset = db.define("assets", {
   },
   status: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
+  },
+  location: {
+    type: DataTypes.STRING,
+    allowNull: true,
   },
   creator: {
     type: DataTypes.STRING,

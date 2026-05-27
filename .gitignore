@@ -2,3 +2,4 @@ node_modules
 temp
 .env
 public/*
+src/database/resource/*

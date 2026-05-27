@@ -11,13 +11,13 @@ const Transaction = db.define("transactions", {
     type: DataTypes.STRING(24),
     allowNull: false,
     references: {
-      model: "user",
+      model: "users",
       key: "nrp",
     },
     onDelete: "CASCADE",
     onUpdate: "CASCADE",
   },
-  asset_number: {
+  asset_id: {
     type: DataTypes.STRING(24),
     allowNull: false,
     references: {

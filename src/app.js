@@ -5,6 +5,8 @@ import { Server } from "socket.io";
 
 import AuthRoute from "./routes/AuthRoute.js";
 import UserRoute from "./routes/UserRoute.js";
+import AssetRoute from "./routes/AssetRoute.js";
+import TransactionRoute from "./routes/TransactionRoute.js";
 
 const app = express();
 
@@ -49,5 +51,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/api", AuthRoute);
 app.use("/api/users", UserRoute);
+app.use("/api/assets", AssetRoute);
+app.use("/api/transactions", TransactionRoute);
 
 export default httpServer;
