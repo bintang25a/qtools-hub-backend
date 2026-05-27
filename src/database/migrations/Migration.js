@@ -1,4 +1,11 @@
-import { db, User, Asset, Transaction } from "../models/Model.js";
+import {
+  db,
+  User,
+  Asset,
+  Transaction,
+  Repair,
+  Report,
+} from "../models/Model.js";
 
 const migration = async () => {
   const args = process.argv.slice(2);
@@ -9,6 +16,8 @@ const migration = async () => {
     users: User,
     assets: Asset,
     transactions: Transaction,
+    repairs: Repair,
+    reports: Report,
   };
 
   try {

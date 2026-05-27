@@ -1,4 +1,4 @@
-import { Asset, Transaction } from "../database/models/Model.js";
+import { Asset, Repair } from "../database/models/Model.js";
 
 export const index = async (req, res) => {
   try {
@@ -6,14 +6,7 @@ export const index = async (req, res) => {
     const offset = (parseInt(page) - 1) * parseInt(limit);
 
     const whereClause = {};
-    const allowedFilters = [
-      "transaction_id",
-      "user_nrp",
-      "asset_number",
-      "loan_needs",
-      "loanAt",
-      "returnAt",
-    ];
+    const allowedFilters = ["repair_id", "asset_id", "repairAt", "finishAt"];
 
     allowedFilters.forEach((key) => {
       if (filters[key]) {
@@ -21,7 +14,7 @@ export const index = async (req, res) => {
       }
     });
 
-    const { count, rows } = await Transaction.findAndCountAll({
+    const { count, rows } = await Repair.findAndCountAll({
       where: whereClause,
       limit: parseInt(limit),
       offset: offset,
@@ -32,7 +25,7 @@ export const index = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "Display all transactions successfully",
+      message: "Display all repairs successfully",
       total_page: totalPages,
       current_page: parseInt(page),
       data: rows,
@@ -41,31 +34,26 @@ export const index = async (req, res) => {
     console.log(error.message);
     res.status(500).json({
       success: false,
-      message: "Display all transactions failed",
+      message: "Display all repairs failed",
     });
   }
 };
 
 export const show = async (req, res) => {
-  const { transaction_id } = req?.params;
+  const { repair_id } = req?.params;
 
-  if (!transaction_id) {
+  if (!repair_id) {
     return res.status(400).json({
       success: false,
-      message: "Display transaction failed, Params cannot empty",
+      message: "Display repair failed, Params cannot empty",
     });
   }
 
   try {
-    const transaction = await Transaction.findByPk(transaction_id, {
+    const repair = await Repair.findByPk(repair_id, {
       include: [
         {
-          association: Transaction.associations.user,
-          as: "user",
-          attributes: ["name"],
-        },
-        {
-          association: Transaction.associations.asset,
+          association: Repair.associations.asset,
           as: "asset",
           attributes: {
             exclude: ["createdAt", "updatedAt"],
@@ -74,36 +62,36 @@ export const show = async (req, res) => {
       ],
     });
 
-    if (!transaction) {
+    if (!repair) {
       return res.status(404).json({
         success: false,
-        message: "Display transaction failed, Transaction not found",
+        message: "Display repair failed, Repair not found",
       });
     }
 
     res.status(200).json({
       success: true,
-      message: "Display transaction successfully",
-      data: transaction,
+      message: "Display repair successfully",
+      data: repair,
     });
   } catch (error) {
     console.log(error.message);
     res.status(500).json({
       success: false,
-      message: "Display transaction failed",
+      message: "Display repair failed",
     });
   }
 };
 
 export const store = async (req, res) => {
-  const { asset_id, loan_needs, loanAt } = req?.body;
+  const { asset_id, repairAt } = req?.body;
 
-  const isEmpty = !asset_id || !loan_needs || !loanAt;
+  const isEmpty = !asset_id || !repairAt;
 
   if (isEmpty) {
     return res.status(400).json({
       success: false,
-      message: "Create transaction failed, Field cannot empty",
+      message: "Create repair failed, Field cannot empty",
     });
   }
 
@@ -112,78 +100,76 @@ export const store = async (req, res) => {
   if (!asset) {
     return res.status(400).json({
       success: false,
-      message: "Create transaction failed, Asset not found",
+      message: "Create repair failed, Asset not found",
     });
   }
 
   if (asset.status !== "AV") {
     return res.status(400).json({
       success: false,
-      message: "Create transaction failed, Asset not available to borrow",
+      message: "Create repair failed, Asset not available to repair",
     });
   }
 
   try {
-    const transaction = await Transaction.create({
-      transaction_id: req.body.transaction_id,
-      user_id: req.nrp,
+    const repair = await Repair.create({
+      repair_id: req.body.repair_id,
       asset_id,
-      loan_needs,
-      loanAt,
+      repairAt,
     });
 
     await asset.update({
-      status: "NA",
+      status: "RP",
     });
 
     res.status(201).json({
       success: true,
-      message: "Create transaction successfully",
-      data: transaction,
+      message: "Create repair successfully",
+      data: repair,
     });
   } catch (error) {
     console.log(error.message);
     res.status(500).json({
       success: false,
-      message: "Create transaction failed",
+      message: "Create repair failed",
     });
   }
 };
 
 export const update = async (req, res) => {
-  const { transaction_id } = req?.params;
+  const { repair_id } = req?.params;
 
-  if (!transaction_id) {
+  if (!repair_id) {
     return res.status(400).json({
       success: false,
-      message: "Update transaction failed, Params cannot empty",
+      message: "Update repair failed, Params cannot empty",
     });
   }
 
-  const { returnAt } = req?.body;
+  const { finishAt } = req?.body;
 
-  const transaction = await Transaction.findByPk(transaction_id, {});
+  const repair = await Repair.findByPk(repair_id, {});
 
-  if (!transaction) {
+  if (!repair) {
     return res.status(404).json({
       success: false,
-      message: "Update transaction failed, Transaction not found",
+      message: "Update repair failed, Repair not found",
     });
   }
 
-  if (!returnAt) {
+  if (!finishAt) {
     return res.status(400).json({
       success: false,
-      message: "Update transaction failed, Field cannot empty",
+      message: "Update repair failed, Field cannot empty",
     });
   }
 
-  const asset = await Asset.findByPk(transaction.asset_id, {});
+  const asset = await Asset.findByPk(repair.asset_id, {});
 
   if (!asset) {
     return res.status(400).json({
       success: false,
-      message: "Create transaction failed, Asset not found",
+      message: "Update repair failed, Asset not found",
     });
   }
 
@@ -192,59 +178,59 @@ export const update = async (req, res) => {
       status: "AV",
     });
 
-    await transaction.update({
-      returnAt,
+    await repair.update({
+      finishAt,
     });
 
     res.status(200).json({
       success: true,
-      message: "Update transaction successfully",
-      data: transaction,
+      message: "Update repair successfully",
+      data: repair,
     });
   } catch (error) {
     console.log(error.message);
     res.status(500).json({
       success: false,
-      message: "Update transaction failed",
+      message: "Update repair failed",
     });
   }
 };
 
 export const destroy = async (req, res) => {
-  const { transaction_id } = req?.params;
+  const { repair_id } = req?.params;
 
-  if (!transaction_id) {
+  if (!repair_id) {
     return res.status(400).json({
       success: false,
-      message: "Delete transaction failed, Params cannot empty",
+      message: "Delete repair failed, Params cannot empty",
     });
   }
 
-  const transaction = await Transaction.findByPk(transaction_id, {});
+  const repair = await Repair.findByPk(repair_id, {});
 
-  if (!transaction) {
+  if (!repair) {
     return res.status(404).json({
       success: false,
-      message: "Delete transaction failed, Transaction not found",
+      message: "Delete repair failed, Repair not found",
     });
   }
 
   try {
-    await Transaction.destroy({
+    await Repair.destroy({
       where: {
-        transaction_id,
+        repair_id,
       },
     });
 
     res.status(200).json({
       success: true,
-      message: "Delete transaction successfully",
+      message: "Delete repair successfully",
     });
   } catch (error) {
     console.log(error.message);
     res.status(500).json({
       success: false,
-      message: "Delete transaction_ failed",
+      message: "Delete repair failed",
     });
   }
 };
