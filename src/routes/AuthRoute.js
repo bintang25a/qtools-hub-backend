@@ -1,11 +1,13 @@
 import express from "express";
-import { isLogin, login, logout } from "../controllers/AuthController.js";
+import { login, me, logout } from "../controllers/AuthController.js";
 import { verifyUser } from "../middlewares/AuthUser.js";
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
 router.post("/login", login);
-router.get("/check", verifyUser, isLogin);
+
+router.use(verifyUser);
 router.delete("/logout", logout);
+router.get("/me", me);
 
 export default router;

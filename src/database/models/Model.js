@@ -1,5 +1,7 @@
 import db from "../../config/database.js";
 import User from "./User.js";
+import Transaction from "./Transaction.js";
+import Asset from "./Asset.js";
 import { DataTypes } from "sequelize";
 
 // User.belongsToMany(Classroom, {
@@ -138,4 +140,4 @@ const Token = db.define("tokens", {
   },
 });
 
-export { db, User, Token, Setting };
+export { db, User, Asset, Transaction, Token, Setting };

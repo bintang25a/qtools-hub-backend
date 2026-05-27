@@ -9,10 +9,6 @@ const db_database = process.env.DB_DATABASE;
 const db_user = process.env.DB_USERNAME;
 const db_password = process.env.DB_PASSWORD;
 
-console.log(db_dialect);
-console.log(db_host);
-console.log(db_user);
-
 const db = new Sequelize(db_database, db_user, db_password, {
   host: db_host,
   dialect: db_dialect,

@@ -28,7 +28,8 @@ export const verifyUser = async (req, res, next) => {
   try {
     const decoded = jwt.verify(activeToken, process.env.JWT_SECRET);
 
-    req.uid = decoded.uid;
+    req.activeToken = activeToken;
+    req.nrp = decoded.nrp;
     req.role = decoded.role;
     req.user = decoded;
 
@@ -47,7 +48,7 @@ export const verifyUser = async (req, res, next) => {
   }
 };
 
-export const assistantOnly = async (req, res, next) => {
+export const toolKeeperOnly = async (req, res, next) => {
   if (!req.user) {
     return res.status(401).json({
       success: false,
@@ -55,17 +56,17 @@ export const assistantOnly = async (req, res, next) => {
     });
   }
 
-  if (req.role != "Admin" && req.role != "Asisten") {
+  if (req.role != "planner" && req.role != "tool keeper") {
     return res.status(403).json({
       success: false,
-      message: "Access denied, Assistant only",
+      message: "Access denied, Tool Keeper only",
     });
   }
 
   next();
 };
 
-export const adminOnly = async (req, res, next) => {
+export const plannerOnly = async (req, res, next) => {
   if (!req.user) {
     return res.status(401).json({
       success: false,
@@ -73,10 +74,10 @@ export const adminOnly = async (req, res, next) => {
     });
   }
 
-  if (req.role != "Admin") {
+  if (req.role != "planner") {
     return res.status(403).json({
       success: false,
-      message: "Access denied, Admin only",
+      message: "Access denied, Planner only",
     });
   }
 

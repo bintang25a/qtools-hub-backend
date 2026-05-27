@@ -1,27 +1,44 @@
 import { DataTypes } from "sequelize";
 import { db } from "./Model.js";
 
-const AssistantClassroom = db.define("assistant_classroom", {
-  uid: {
-    type: DataTypes.STRING(16),
+const Transaction = db.define("transactions", {
+  transaction_id: {
+    type: DataTypes.STRING(24),
+    allowNull: false,
+    primaryKey: true,
+  },
+  user_id: {
+    type: DataTypes.STRING(24),
     allowNull: false,
     references: {
-      model: "users",
-      key: "uid",
+      model: "user",
+      key: "nrp",
     },
     onDelete: "CASCADE",
     onUpdate: "CASCADE",
   },
-  class_code: {
-    type: DataTypes.STRING(32),
+  asset_number: {
+    type: DataTypes.STRING(24),
     allowNull: false,
     references: {
-      model: "classrooms",
-      key: "class_code",
+      model: "assets",
+      key: "asset_number",
     },
     onDelete: "CASCADE",
     onUpdate: "CASCADE",
+  },
+  loan_needs: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+  },
+  loanAt: {
+    type: DataTypes.DATE,
+    allowNull: false,
+  },
+  returnAt: {
+    type: DataTypes.DATE,
+    allowNull: true,
   },
 });
 
-export default AssistantClassroom;
+export default Transaction;

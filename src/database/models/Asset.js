@@ -1,28 +1,28 @@
 import { DataTypes } from "sequelize";
 import { db } from "./Model.js";
 
-const User = db.define("users", {
-  nrp: {
+const Asset = db.define("assets", {
+  asset_number: {
     type: DataTypes.STRING(24),
     allowNull: false,
     primaryKey: true,
   },
-  name: {
+  class: {
+    type: DataTypes.STRING(2),
+    allowNull: false,
+  },
+  description: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  role: {
-    type: DataTypes.ENUM("planner", "tool keeper", "mechanic"),
+  status: {
+    type: DataTypes.STRING,
     allowNull: false,
   },
-  password: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
-  photo: {
+  creator: {
     type: DataTypes.STRING,
     allowNull: true,
   },
 });
 
-export default User;
+export default Asset;

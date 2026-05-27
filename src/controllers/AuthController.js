@@ -5,38 +5,21 @@ import jwt from "jsonwebtoken";
 import fs from "fs";
 
 export const login = async (req, res) => {
-  const { uid, password, role } = req.body;
+  const { nrp, password } = req.body;
 
-  if ((!uid, !password, !role)) {
+  if (!nrp || !password) {
     return res.status(400).json({
       success: false,
       message: "Login failed, Field cannot empty",
     });
   }
 
-  const user = await User.findOne({
-    where: {
-      uid,
-    },
-  });
+  const user = await User.findByPk(nrp, {});
 
   if (!user) {
     return res.status(404).json({
       success: false,
       message: "Login failed, User not found",
-    });
-  }
-
-  const allowedRoles = {
-    Admin: ["Admin", "Asisten", "Praktikan"],
-    Asisten: ["Asisten", "Praktikan"],
-    Praktikan: ["Praktikan"],
-  };
-
-  if (!allowedRoles[user.role]?.includes(role)) {
-    return res.status(403).json({
-      success: false,
-      message: `Login failed, ${user.role} cannot login as ${role}`,
     });
   }
 
@@ -50,9 +33,9 @@ export const login = async (req, res) => {
   }
 
   const payload = {
-    uid: user.uid,
+    nrp: user.nrp,
     name: user.name,
-    role,
+    role: user.role,
   };
 
   const token = jwt.sign(payload, process.env.JWT_SECRET, {
@@ -69,7 +52,7 @@ export const login = async (req, res) => {
     expiredAt: new Date(exp),
   });
 
-  const tempDir = path.join(process.cwd(), "temp", user.uid);
+  const tempDir = path.join(process.cwd(), "temp", user.nrp);
 
   if (fs.existsSync(tempDir)) {
     fs.rmSync(tempDir, { recursive: true, force: true });
@@ -79,40 +62,36 @@ export const login = async (req, res) => {
     success: true,
     message: "Login successfully",
     data: {
-      uid: user.uid,
+      nrp: user.nrp,
       name: user.name,
-      role,
       token,
     },
   });
 };
 
-export const isLogin = async (req, res) => {
+export const me = async (req, res) => {
+  const tempUser = await User.findByPk(req.nrp, {});
+
+  if (!tempUser) {
+    return res.status(404).json({
+      success: false,
+      message: "Get user failed, User not found",
+    });
+  }
+
+  const { password, ...user } = tempUser.toJSON();
+
   return res.status(200).json({
     success: true,
+    message: "Get user successfully",
+    data: user,
   });
 };
 
 export const logout = async (req, res) => {
-  const authHeader = req.headers["authorization"];
-  const activeToken = authHeader && authHeader.split(" ")[1];
-
-  const token = await Token.findOne({
-    where: {
-      token: activeToken,
-    },
-  });
-
-  if (!token) {
-    return res.status(200).json({
-      success: true,
-      message: "Logout successfully, Token already expired",
-    });
-  }
-
   await Token.destroy({
     where: {
-      token: activeToken,
+      token: req.activeToken,
     },
   });
 

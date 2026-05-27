@@ -1,3 +1,5 @@
+import UserSeeder from "./UserSeeder.js";
+
 const seeder = async () => {
   try {
     await UserSeeder();
