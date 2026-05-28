@@ -64,6 +64,7 @@ export const login = async (req, res) => {
     data: {
       nrp: user.nrp,
       name: user.name,
+      role: user.role,
       token,
     },
   });
