@@ -8,6 +8,16 @@ export const index = async (req, res) => {
     const { page = 1, limit = 20, ...filters } = req.query;
     const offset = (parseInt(page) - 1) * parseInt(limit);
 
+    if (filters["all"] == "true") {
+      const users = await User.findAll();
+
+      return res.status(200).json({
+        success: true,
+        message: "Display all users successfully",
+        data: users,
+      });
+    }
+
     const allowedFilters = ["nrp", "name", "role"];
     const whereClause = {};
 

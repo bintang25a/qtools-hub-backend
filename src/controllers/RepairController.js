@@ -5,6 +5,16 @@ export const index = async (req, res) => {
     const { page = 1, limit = 20, ...filters } = req.query;
     const offset = (parseInt(page) - 1) * parseInt(limit);
 
+    if (filters["all"] == "true") {
+      const repairs = await Repair.findAll();
+
+      return res.status(200).json({
+        success: true,
+        message: "Display all repairs successfully",
+        data: repairs,
+      });
+    }
+
     const whereClause = {};
     const allowedFilters = ["repair_id", "asset_id", "repairAt", "finishAt"];
 
