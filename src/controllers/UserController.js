@@ -1,3 +1,4 @@
+import { Op } from "sequelize";
 import { User } from "../database/models/Model.js";
 import bcrypt from "bcrypt";
 import fs from "fs";

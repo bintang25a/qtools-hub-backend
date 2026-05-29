@@ -1,3 +1,4 @@
+import { Op } from "sequelize";
 import { Asset, Report } from "../database/models/Model.js";
 
 export const index = async (req, res) => {
@@ -29,6 +30,18 @@ export const index = async (req, res) => {
       limit: parseInt(limit),
       offset: offset,
       order: [["createdAt", "DESC"]],
+      include: [
+        {
+          association: Report.associations.reporter,
+          as: "reporter",
+          attributes: ["name"],
+        },
+        {
+          association: Report.associations.asset,
+          as: "asset",
+          attributes: ["description"],
+        },
+      ],
     });
 
     const totalPages = Math.ceil(count / limit);
@@ -63,7 +76,7 @@ export const show = async (req, res) => {
     const report = await Report.findByPk(report_id, {
       include: [
         {
-          association: Report.associations.user,
+          association: Report.associations.reporter,
           as: "reporter",
           attributes: ["name"],
         },

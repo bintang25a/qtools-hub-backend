@@ -1,3 +1,4 @@
+import { Op } from "sequelize";
 import { Asset, Repair } from "../database/models/Model.js";
 
 export const index = async (req, res) => {
