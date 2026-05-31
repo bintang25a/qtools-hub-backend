@@ -73,15 +73,18 @@ export const show = async (req, res) => {
       attributes: {
         exclude: ["password"],
       },
-      // include: [
-      //   {
-      //     association: User.associations.transactions,
-      //     as: "transactions",
-      //     through: {
-      //       attributes: [],
-      //     },
-      //   },
-      // ],
+      include: [
+        {
+          association: User.associations.transactions,
+          as: "transactions",
+          attributes: ["transaction_id", "loanAt", "returnAt"],
+        },
+        {
+          association: User.associations.reports,
+          as: "reports",
+          attributes: ["report_id", "createdAt"],
+        },
+      ],
     });
 
     if (!user) {

@@ -130,7 +130,7 @@ export const store = async (req, res) => {
     });
 
     await asset.update({
-      status: "RP",
+      status: "REPAIR",
     });
 
     res.status(201).json({

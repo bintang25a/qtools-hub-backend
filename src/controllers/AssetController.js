@@ -67,7 +67,25 @@ export const show = async (req, res) => {
   }
 
   try {
-    const asset = await Asset.findByPk(asset_number, {});
+    const asset = await Asset.findByPk(asset_number, {
+      include: [
+        {
+          association: Asset.associations.transactions,
+          as: "transactions",
+          attributes: ["transaction_id", "loanAt", "returnAt"],
+        },
+        {
+          association: Asset.associations.reports,
+          as: "reports",
+          attributes: ["report_id", "createdAt"],
+        },
+        {
+          association: Asset.associations.repairs,
+          as: "repairs",
+          attributes: ["repair_id", "repairAt", "finishAt"],
+        },
+      ],
+    });
 
     if (!asset) {
       return res.status(404).json({

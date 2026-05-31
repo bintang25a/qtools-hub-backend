@@ -6,6 +6,33 @@ import Repair from "./Repair.js";
 import Report from "./Report.js";
 import { DataTypes } from "sequelize";
 
+User.hasMany(Transaction, {
+  foreignKey: "user_id",
+  sourceKey: "nrp",
+  as: "transactions",
+});
+User.hasMany(Report, {
+  foreignKey: "reporter_id",
+  sourceKey: "nrp",
+  as: "reports",
+});
+
+Asset.hasMany(Transaction, {
+  foreignKey: "asset_id",
+  sourceKey: "asset_number",
+  as: "transactions",
+});
+Asset.hasMany(Repair, {
+  foreignKey: "asset_id",
+  sourceKey: "asset_number",
+  as: "repairs",
+});
+Asset.hasMany(Report, {
+  foreignKey: "asset_id",
+  sourceKey: "asset_number",
+  as: "reports",
+});
+
 Transaction.belongsTo(User, {
   foreignKey: "user_id",
   sourceKey: "nrp",
