@@ -193,8 +193,7 @@ export const update = async (req, res) => {
     });
   }
 
-  const isEmpty =
-    !classAsset || !description || !status || !location || !creator;
+  const isEmpty = !classAsset || !description || !status || !location;
 
   if (isEmpty) {
     return res.status(400).json({

@@ -171,7 +171,7 @@ export const update = async (req, res) => {
     });
   }
 
-  const { returnAt } = req?.body;
+  const { returnAt, user_id } = req?.body;
 
   const transaction = await Transaction.findByPk(transaction_id, {});
 
@@ -182,10 +182,17 @@ export const update = async (req, res) => {
     });
   }
 
-  if (!returnAt) {
+  if (!returnAt || !user_id) {
     return res.status(400).json({
       success: false,
       message: "Update transaction failed, Field cannot empty",
+    });
+  }
+
+  if (user_id !== req.nrp && req.role !== "planner") {
+    return res.status(400).json({
+      success: false,
+      message: "Update transaction failed, User not same",
     });
   }
 
