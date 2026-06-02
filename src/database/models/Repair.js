@@ -25,6 +25,10 @@ const Repair = db.define("repairs", {
     type: DataTypes.DATE,
     allowNull: true,
   },
+  notes: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+  },
 });
 
 export default Repair;

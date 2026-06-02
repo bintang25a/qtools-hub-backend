@@ -112,7 +112,7 @@ export const store = async (req, res) => {
   const isEmpty = !asset_id || !loan_needs || !loanAt;
 
   if (isEmpty) {
-    return res.status(400).json({
+    return res.status(422).json({
       success: false,
       message: "Create transaction failed, Field cannot empty",
     });
@@ -121,7 +121,7 @@ export const store = async (req, res) => {
   const asset = await Asset.findByPk(asset_id, {});
 
   if (!asset) {
-    return res.status(400).json({
+    return res.status(404).json({
       success: false,
       message: "Create transaction failed, Asset not found",
     });
@@ -171,7 +171,7 @@ export const update = async (req, res) => {
     });
   }
 
-  const { returnAt, user_id } = req?.body;
+  const { user_id, asset_id, loan_needs, loanAt, returnAt } = req?.body;
 
   const transaction = await Transaction.findByPk(transaction_id, {});
 
@@ -182,35 +182,30 @@ export const update = async (req, res) => {
     });
   }
 
-  if (!returnAt || !user_id) {
-    return res.status(400).json({
+  const isEmpty = !user_id || !asset_id || !loan_needs || !loanAt;
+
+  if (isEmpty) {
+    return res.status(422).json({
       success: false,
       message: "Update transaction failed, Field cannot empty",
-    });
-  }
-
-  if (user_id !== req.nrp && req.role !== "planner") {
-    return res.status(400).json({
-      success: false,
-      message: "Update transaction failed, User not same",
     });
   }
 
   const asset = await Asset.findByPk(transaction.asset_id, {});
 
   if (!asset) {
-    return res.status(400).json({
+    return res.status(404).json({
       success: false,
       message: "Create transaction failed, Asset not found",
     });
   }
 
   try {
-    await asset.update({
-      status: "AV",
-    });
-
     await transaction.update({
+      user_id,
+      asset_id,
+      loan_needs,
+      loanAt,
       returnAt,
     });
 

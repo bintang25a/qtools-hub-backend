@@ -15,7 +15,7 @@ const Asset = db.define("assets", {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  status: {
+  district: {
     type: DataTypes.STRING,
     allowNull: true,
   },
@@ -23,9 +23,9 @@ const Asset = db.define("assets", {
     type: DataTypes.STRING,
     allowNull: true,
   },
-  creator: {
+  status: {
     type: DataTypes.STRING,
-    allowNull: true,
+    allowNull: false,
   },
 });
 

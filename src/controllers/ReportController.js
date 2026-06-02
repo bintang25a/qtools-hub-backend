@@ -134,8 +134,9 @@ export const store = async (req, res) => {
 
   try {
     const report = await Report.create({
-      user_id: req.nrp,
+      reporter_id: req.nrp,
       description,
+      asset_id,
     });
 
     res.status(201).json({

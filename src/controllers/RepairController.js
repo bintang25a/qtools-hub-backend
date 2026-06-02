@@ -95,7 +95,7 @@ export const show = async (req, res) => {
 };
 
 export const store = async (req, res) => {
-  const { asset_id, repairAt } = req?.body;
+  const { asset_id, repairAt, finishAt, notes } = req?.body;
 
   const isEmpty = !asset_id || !repairAt;
 
@@ -127,11 +127,15 @@ export const store = async (req, res) => {
       repair_id: req.body.repair_id,
       asset_id,
       repairAt,
+      finishAt,
+      notes,
     });
 
-    await asset.update({
-      status: "REPAIR",
-    });
+    if (!finishAt) {
+      await asset.update({
+        status: "REPAIR",
+      });
+    }
 
     res.status(201).json({
       success: true,
@@ -157,7 +161,16 @@ export const update = async (req, res) => {
     });
   }
 
-  const { finishAt } = req?.body;
+  const { repairAt, finishAt, notes } = req?.body;
+
+  const isEmpty = !asset_id || !repairAt;
+
+  if (isEmpty) {
+    return res.status(400).json({
+      success: false,
+      message: "Create repair failed, Field cannot empty",
+    });
+  }
 
   const repair = await Repair.findByPk(repair_id, {});
 
@@ -185,12 +198,16 @@ export const update = async (req, res) => {
   }
 
   try {
-    await asset.update({
-      status: "AV",
-    });
+    if (finishAt) {
+      await asset.update({
+        status: "AV",
+      });
+    }
 
     await repair.update({
+      repairAt,
       finishAt,
+      notes,
     });
 
     res.status(200).json({

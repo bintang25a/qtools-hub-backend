@@ -113,21 +113,21 @@ export const store = async (req, res) => {
     asset_number,
     class: classAsset,
     description,
-    status,
+    district,
     location,
-    creator,
+    status,
   } = req?.body;
 
   const isEmpty =
     !asset_number ||
     !classAsset ||
     !description ||
-    !status ||
+    !district ||
     !location ||
-    !creator;
+    !status;
 
   if (isEmpty) {
-    return res.status(400).json({
+    return res.status(422).json({
       success: false,
       message: "Create asset failed, Field cannot empty",
     });
@@ -136,7 +136,7 @@ export const store = async (req, res) => {
   const asset = await Asset.findByPk(asset_number, {});
 
   if (asset) {
-    return res.status(400).json({
+    return res.status(422).json({
       success: false,
       message: "Create asset failed, Asset already exist",
     });
@@ -147,9 +147,9 @@ export const store = async (req, res) => {
       asset_number,
       class: classAsset,
       description,
-      status,
+      district,
       location,
-      creator,
+      status,
     });
 
     res.status(201).json({
@@ -179,9 +179,9 @@ export const update = async (req, res) => {
   const {
     class: classAsset,
     description,
-    status,
+    district,
     location,
-    creator,
+    status,
   } = req?.body;
 
   const asset = await Asset.findByPk(asset_number, {});
@@ -193,10 +193,10 @@ export const update = async (req, res) => {
     });
   }
 
-  const isEmpty = !classAsset || !description || !status || !location;
+  const isEmpty = !classAsset || !description || !status;
 
   if (isEmpty) {
-    return res.status(400).json({
+    return res.status(422).json({
       success: true,
       message: "Update asset failed, Field cannot empty",
     });
@@ -206,9 +206,9 @@ export const update = async (req, res) => {
     await asset.update({
       class: classAsset,
       description,
-      status,
+      district,
       location,
-      creator,
+      status,
     });
 
     res.status(200).json({

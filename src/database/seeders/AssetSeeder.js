@@ -28,7 +28,7 @@ export default async function AssetSeeder() {
     description: item["ASSET DESCRIPTION"],
     status: item["STATUS"],
     location: item["LOCATION"],
-    creator: item["CREATOR"],
+    district: item["DISTRICT"],
   }));
 
   await Asset.bulkCreate(mappedData, {
