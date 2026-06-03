@@ -22,7 +22,8 @@ export const index = async (req, res) => {
       "class",
       "status",
       "location",
-      "creator",
+      "district",
+      "description",
     ];
 
     allowedFilters.forEach((key) => {

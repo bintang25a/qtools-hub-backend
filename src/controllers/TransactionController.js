@@ -20,7 +20,7 @@ export const index = async (req, res) => {
     const allowedFilters = [
       "transaction_id",
       "user_nrp",
-      "asset_number",
+      "asset_id",
       "loan_needs",
       "loanAt",
       "returnAt",

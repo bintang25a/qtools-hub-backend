@@ -17,7 +17,13 @@ export const index = async (req, res) => {
     }
 
     const whereClause = {};
-    const allowedFilters = ["repair_id", "asset_id", "repairAt", "finishAt"];
+    const allowedFilters = [
+      "repair_id",
+      "asset_id",
+      "repairAt",
+      "finishAt",
+      "notes",
+    ];
 
     allowedFilters.forEach((key) => {
       if (filters[key]) {
