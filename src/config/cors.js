@@ -9,6 +9,7 @@ export default cors({
     "https://tjwqh821-5174.asse.devtunnels.ms",
     "https://165a-2405-8180-401-7d68-3d58-b19c-b5bd-221b.ngrok-free.app",
     "http://localhost:5173",
+    "http://localhost:5174",
     "http://localhost:3000",
   ],
 });

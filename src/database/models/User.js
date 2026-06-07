@@ -15,6 +15,10 @@ const User = db.define("users", {
     type: DataTypes.ENUM("planner", "tool keeper", "mechanic"),
     allowNull: false,
   },
+  section: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
   password: {
     type: DataTypes.STRING,
     allowNull: true,

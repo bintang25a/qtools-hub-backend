@@ -19,7 +19,7 @@ export const index = async (req, res) => {
       });
     }
 
-    const allowedFilters = ["nrp", "name", "role"];
+    const allowedFilters = ["nrp", "name", "role", "section"];
     const whereClause = {};
 
     allowedFilters.forEach((key) => {
@@ -109,9 +109,9 @@ export const show = async (req, res) => {
 };
 
 export const store = async (req, res) => {
-  const { nrp, name, role } = req?.body;
+  const { nrp, name, role, section } = req?.body;
 
-  if (!nrp || !name || !role) {
+  if (!nrp || !name || !role || !section) {
     return res.status(400).json({
       success: false,
       message: "Create user failed, Field cannot empty",
@@ -147,6 +147,7 @@ export const store = async (req, res) => {
     const tempUser = await User.create({
       nrp: nrp.toUpperCase(),
       name,
+      section,
       role,
       password: hashPassword,
       photo,
@@ -178,7 +179,7 @@ export const update = async (req, res) => {
     });
   }
 
-  const { name, role, password } = req.body;
+  const { name, role, password, section } = req.body;
 
   const user = await User.findByPk(nrp, {});
 
@@ -189,7 +190,7 @@ export const update = async (req, res) => {
     });
   }
 
-  if (!name || !role) {
+  if (!name || !role || !section) {
     return res.status(400).json({
       success: true,
       message: "Update user failed, Field cannot empty",
@@ -224,6 +225,7 @@ export const update = async (req, res) => {
     await user.update({
       nrp,
       name,
+      section,
       role,
       password: hashPassword,
       photo,

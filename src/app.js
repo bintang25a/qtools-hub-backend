@@ -9,6 +9,7 @@ import AssetRoute from "./routes/AssetRoute.js";
 import RepairRoute from "./routes/RepairRoute.js";
 import ReportRoute from "./routes/ReportRoute.js";
 import TransactionRoute from "./routes/TransactionRoute.js";
+import ActionRoute from "./routes/ActionsRoute.js";
 
 const app = express();
 
@@ -57,5 +58,6 @@ app.use("/api/assets", AssetRoute);
 app.use("/api/repairs", RepairRoute);
 app.use("/api/reports", ReportRoute);
 app.use("/api/transactions", TransactionRoute);
+app.use("/api/actions", ActionRoute);
 
 export default httpServer;

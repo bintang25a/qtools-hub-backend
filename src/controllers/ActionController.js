@@ -1,6 +1,6 @@
-import { Asset } from "../database/models/Model.js";
+import { Asset, Transaction } from "../database/models/Model.js";
 
-export const update = async (req, res) => {
+export const assetReturn = async (req, res) => {
   const { transaction_id } = req?.params;
 
   if (!transaction_id) {
@@ -10,7 +10,7 @@ export const update = async (req, res) => {
     });
   }
 
-  const { user_id, asset_id, returnAt } = req?.body;
+  const { returnAt } = req?.body;
 
   const transaction = await Transaction.findByPk(transaction_id, {});
 
@@ -21,17 +21,10 @@ export const update = async (req, res) => {
     });
   }
 
-  if (!returnAt || !user_id) {
+  if (!returnAt) {
     return res.status(400).json({
       success: false,
       message: "Update transaction failed, Field cannot empty",
-    });
-  }
-
-  if (user_id !== req.nrp && req.role !== "planner") {
-    return res.status(400).json({
-      success: false,
-      message: "Update transaction failed, User not same",
     });
   }
 

@@ -32,6 +32,69 @@ const Report = db.define("reports", {
     type: DataTypes.TEXT,
     allowNull: false,
   },
+  evidence1: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  remark1: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+  },
+  evidence2: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  remark2: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+  },
+  follow_up: {
+    type: DataTypes.ENUM("repair", "calibration", "replace"),
+    allowNull: false,
+    validate: {
+      isIn: [["repair", "calibration", "replace"]],
+    },
+  },
+  planner_id: {
+    type: DataTypes.STRING(24),
+    allowNull: true,
+    references: {
+      model: "users",
+      key: "nrp",
+    },
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE",
+  },
+  plant_engineer_id: {
+    type: DataTypes.STRING(24),
+    allowNull: true,
+    references: {
+      model: "users",
+      key: "nrp",
+    },
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE",
+  },
+  section_head_id: {
+    type: DataTypes.STRING(24),
+    allowNull: true,
+    references: {
+      model: "users",
+      key: "nrp",
+    },
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE",
+  },
+  depth_head_id: {
+    type: DataTypes.STRING(24),
+    allowNull: true,
+    references: {
+      model: "users",
+      key: "nrp",
+    },
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE",
+  },
 });
 
 export default Report;

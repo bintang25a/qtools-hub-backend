@@ -15,8 +15,9 @@ import uploadPhoto from "../middlewares/UploadUserPhoto.js";
 
 const router = express.Router({ mergeParams: true });
 
-router.use(verifyUser, toolKeeperOnly);
+router.use(verifyUser);
 router.get("/", index);
+router.use(toolKeeperOnly);
 router.get("/:nrp", show);
 
 router.use(plannerOnly);

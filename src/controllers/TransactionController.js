@@ -19,7 +19,7 @@ export const index = async (req, res) => {
     const whereClause = {};
     const allowedFilters = [
       "transaction_id",
-      "user_nrp",
+      "user_id",
       "asset_id",
       "loan_needs",
       "loanAt",
@@ -47,6 +47,29 @@ export const index = async (req, res) => {
       total_page: totalPages,
       current_page: parseInt(page),
       data: rows,
+    });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({
+      success: false,
+      message: "Display all transactions failed",
+    });
+  }
+};
+
+export const indexByUser = async (req, res) => {
+  try {
+    const { user_id } = req.query;
+
+    const transactions = await Transaction.findAll({
+      where: {
+        user_id,
+      },
+    });
+    res.status(200).json({
+      success: true,
+      message: "Display all transactions successfully",
+      data: transactions,
     });
   } catch (error) {
     console.log(error.message);
