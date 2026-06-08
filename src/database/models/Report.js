@@ -55,6 +55,16 @@ const Report = db.define("reports", {
       isIn: [["repair", "calibration", "replace"]],
     },
   },
+  group_leader_id: {
+    type: DataTypes.STRING(24),
+    allowNull: true,
+    references: {
+      model: "users",
+      key: "nrp",
+    },
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE",
+  },
   planner_id: {
     type: DataTypes.STRING(24),
     allowNull: true,
@@ -85,7 +95,7 @@ const Report = db.define("reports", {
     onDelete: "CASCADE",
     onUpdate: "CASCADE",
   },
-  depth_head_id: {
+  dept_head_id: {
     type: DataTypes.STRING(24),
     allowNull: true,
     references: {

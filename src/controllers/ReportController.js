@@ -17,7 +17,19 @@ export const index = async (req, res) => {
     }
 
     const whereClause = {};
-    const allowedFilters = ["reporter_id", "asset_id", "description"];
+    const allowedFilters = [
+      "reporter_id",
+      "asset_id",
+      "description",
+      "remark1",
+      "remark2",
+      "follow_up",
+      "group_leader_id",
+      "planner_id",
+      "plant_engineer_id",
+      "section_head_id",
+      "dept_head_id",
+    ];
 
     allowedFilters.forEach((key) => {
       if (filters[key]) {
@@ -81,6 +93,31 @@ export const show = async (req, res) => {
           attributes: ["name"],
         },
         {
+          association: Report.associations.groupLeader,
+          as: "groupLeader",
+          attributes: ["name"],
+        },
+        {
+          association: Report.associations.planner,
+          as: "planner",
+          attributes: ["name"],
+        },
+        {
+          association: Report.associations.plantEngineer,
+          as: "plantEngineer",
+          attributes: ["name"],
+        },
+        {
+          association: Report.associations.sectionHead,
+          as: "sectionHead",
+          attributes: ["name"],
+        },
+        {
+          association: Report.associations.deptHead,
+          as: "deptHead",
+          attributes: ["name"],
+        },
+        {
           association: Report.associations.asset,
           as: "asset",
           attributes: {
@@ -112,9 +149,30 @@ export const show = async (req, res) => {
 };
 
 export const store = async (req, res) => {
-  const { asset_id, description } = req?.body;
+  const {
+    asset_id,
+    description,
+    remark1,
+    remark2,
+    follow_up,
+    group_leader_id,
+    planner_id,
+    plant_engineer_id,
+    section_head_id,
+    dept_head_id,
+  } = req?.body;
 
-  const isEmpty = !asset_id || !description;
+  const isEmpty =
+    !asset_id ||
+    !description ||
+    !remark1 ||
+    !remark2 ||
+    !follow_up ||
+    !group_leader_id ||
+    !planner_id ||
+    !plant_engineer_id ||
+    !section_head_id ||
+    !dept_head_id;
 
   if (isEmpty) {
     return res.status(400).json({
@@ -132,11 +190,24 @@ export const store = async (req, res) => {
     });
   }
 
+  const evidence1 = req.files?.evidence1?.[0]?.filename || null;
+  const evidence2 = req.files?.evidence2?.[0]?.filename || null;
+
   try {
     const report = await Report.create({
       reporter_id: req.nrp,
-      description,
       asset_id,
+      description,
+      evidence1,
+      remark1,
+      evidence2,
+      remark2,
+      follow_up,
+      group_leader_id,
+      planner_id,
+      plant_engineer_id,
+      section_head_id,
+      dept_head_id,
     });
 
     res.status(201).json({

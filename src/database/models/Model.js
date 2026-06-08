@@ -50,15 +50,27 @@ Repair.belongsTo(Asset, {
   as: "asset",
 });
 
-Report.belongsTo(User, {
-  foreignKey: "reporter_id",
-  sourceKey: "nrp",
-  as: "reporter",
-});
 Report.belongsTo(Asset, {
   foreignKey: "asset_id",
   sourceKey: "asset_number",
   as: "asset",
+});
+
+const userRelations = [
+  { foreignKey: "reporter_id", as: "reporter" },
+  { foreignKey: "group_leader_id", as: "groupLeader" },
+  { foreignKey: "planner_id", as: "planner" },
+  { foreignKey: "plant_engineer_id", as: "plantEngineer" },
+  { foreignKey: "section_head_id", as: "sectionHead" },
+  { foreignKey: "dept_head_id", as: "deptHead" },
+];
+
+userRelations.forEach(({ foreignKey, as }) => {
+  Report.belongsTo(User, {
+    foreignKey,
+    targetKey: "nrp",
+    as,
+  });
 });
 
 const Setting = db.define("settings", {
