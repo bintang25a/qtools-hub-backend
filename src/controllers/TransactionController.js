@@ -62,10 +62,10 @@ export const indexByUser = async (req, res) => {
     const { user_id } = req.query;
 
     const transactions = await Transaction.findAll({
-      where: {
-        user_id,
-      },
+      where: { user_id },
+      order: [["createdAt", "DESC"]],
     });
+
     res.status(200).json({
       success: true,
       message: "Display all transactions successfully",

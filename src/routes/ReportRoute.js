@@ -5,6 +5,7 @@ import {
   store,
   update,
   destroy,
+  indexByUser,
 } from "../controllers/ReportController.js";
 import { verifyUser } from "../middlewares/AuthUser.js";
 import uploadEvidence from "../middlewares/UploadEvidenceImage.js";
@@ -18,6 +19,7 @@ const evidence = [
 
 router.use(verifyUser);
 router.get("/", index);
+router.get("/byUser", indexByUser);
 router.get("/:report_id", show);
 router.post("/", uploadEvidence.fields(evidence), store);
 router.patch("/:report_id", update);

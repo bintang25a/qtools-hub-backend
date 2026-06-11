@@ -1,5 +1,7 @@
 import { Op } from "sequelize";
 import { Asset, Report } from "../database/models/Model.js";
+import fs from "fs";
+import path from "path";
 
 export const index = async (req, res) => {
   try {
@@ -49,9 +51,36 @@ export const index = async (req, res) => {
           attributes: ["name"],
         },
         {
+          association: Report.associations.groupLeader,
+          as: "groupLeader",
+          attributes: ["name"],
+        },
+        {
+          association: Report.associations.planner,
+          as: "planner",
+          attributes: ["name"],
+        },
+        {
+          association: Report.associations.plantEngineer,
+          as: "plantEngineer",
+          attributes: ["name"],
+        },
+        {
+          association: Report.associations.sectionHead,
+          as: "sectionHead",
+          attributes: ["name"],
+        },
+        {
+          association: Report.associations.deptHead,
+          as: "deptHead",
+          attributes: ["name"],
+        },
+        {
           association: Report.associations.asset,
           as: "asset",
-          attributes: ["description"],
+          attributes: {
+            exclude: ["createdAt", "updatedAt"],
+          },
         },
       ],
     });
@@ -70,6 +99,29 @@ export const index = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Display all reports failed",
+    });
+  }
+};
+
+export const indexByUser = async (req, res) => {
+  try {
+    const { user_id } = req.query;
+
+    const reports = await Report.findAll({
+      where: { reporter_id: user_id },
+      order: [["createdAt", "DESC"]],
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Display all reports successfully",
+      data: reports,
+    });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({
+      success: false,
+      message: "Display all transactions failed",
     });
   }
 };
@@ -166,7 +218,6 @@ export const store = async (req, res) => {
     !asset_id ||
     !description ||
     !remark1 ||
-    !remark2 ||
     !follow_up ||
     !group_leader_id ||
     !planner_id ||
@@ -234,7 +285,29 @@ export const update = async (req, res) => {
     });
   }
 
-  const { asset_id, description } = req?.body;
+  const {
+    asset_id,
+    description,
+    remark1,
+    remark2,
+    follow_up,
+    group_leader_id,
+    planner_id,
+    plant_engineer_id,
+    section_head_id,
+    dept_head_id,
+  } = req?.body;
+
+  const isEmpty =
+    !asset_id ||
+    !description ||
+    !remark1 ||
+    !follow_up ||
+    !group_leader_id ||
+    !planner_id ||
+    !plant_engineer_id ||
+    !section_head_id ||
+    !dept_head_id;
 
   const report = await Report.findByPk(report_id, {});
 
@@ -245,7 +318,7 @@ export const update = async (req, res) => {
     });
   }
 
-  if (!asset_id || !description) {
+  if (isEmpty) {
     return res.status(400).json({
       success: false,
       message: "Update report failed, Field cannot empty",
@@ -262,9 +335,43 @@ export const update = async (req, res) => {
   }
 
   try {
+    let evidence1 = report?.evidence1;
+    let evidence2 = report?.evidence2;
+
+    if (req.file) {
+      evidence1 = req.files?.evidence1?.[0]?.filename || null;
+      evidence2 = req.files?.evidence2?.[0]?.filename || null;
+
+      if (report?.evidence1) {
+        const oldFilePath = path.join("public/evidences", report?.evidence1);
+
+        if (fs.existsSync(oldFilePath)) {
+          fs.unlinkSync(oldFilePath);
+        }
+      }
+
+      if (report?.evidence2) {
+        const oldFilePath = path.join("public/evidences", report?.evidence2);
+
+        if (fs.existsSync(oldFilePath)) {
+          fs.unlinkSync(oldFilePath);
+        }
+      }
+    }
+
     await report.update({
       asset_id,
       description,
+      evidence1,
+      remark1,
+      evidence2,
+      remark2,
+      follow_up,
+      group_leader_id,
+      planner_id,
+      plant_engineer_id,
+      section_head_id,
+      dept_head_id,
     });
 
     res.status(200).json({
@@ -301,6 +408,22 @@ export const destroy = async (req, res) => {
   }
 
   try {
+    if (report?.evidence1) {
+      const oldFilePath = path.join("public/evidences", report?.evidence1);
+
+      if (fs.existsSync(oldFilePath)) {
+        fs.unlinkSync(oldFilePath);
+      }
+    }
+
+    if (report?.evidence2) {
+      const oldFilePath = path.join("public/evidences", report?.evidence2);
+
+      if (fs.existsSync(oldFilePath)) {
+        fs.unlinkSync(oldFilePath);
+      }
+    }
+
     await Report.destroy({
       where: {
         report_id,
