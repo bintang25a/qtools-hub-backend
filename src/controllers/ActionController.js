@@ -1,3 +1,4 @@
+import puppeteer from "puppeteer";
 import { Asset, Transaction } from "../database/models/Model.js";
 
 export const assetReturn = async (req, res) => {
@@ -56,6 +57,50 @@ export const assetReturn = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Update transaction failed",
+    });
+  }
+};
+
+export const pdfDownload = async (req, res) => {
+  try {
+    const { html } = req.body;
+
+    const browser = await puppeteer.launch({
+      headless: true,
+      args: ["--no-sandbox"],
+    });
+
+    const page = await browser.newPage();
+
+    await page.setContent(html, {
+      waitUntil: "networkidle0",
+    });
+
+    const pdfBuffer = await page.pdf({
+      format: "A4",
+      landscape: true,
+      printBackground: true,
+      margin: {
+        top: "0",
+        bottom: "0",
+        left: "0",
+        right: "0",
+      },
+    });
+
+    await browser.close();
+
+    res.set({
+      "Content-Type": "application/pdf",
+      "Content-Disposition": 'attachment; filename="BAKK.pdf"',
+    });
+
+    res.send(pdfBuffer);
+  } catch (err) {
+    console.log(err);
+
+    res.status(500).json({
+      message: "Failed generate PDF",
     });
   }
 };

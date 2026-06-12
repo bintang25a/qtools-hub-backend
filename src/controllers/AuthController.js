@@ -82,6 +82,10 @@ export const me = async (req, res) => {
 
   const { password, ...user } = tempUser.toJSON();
 
+  user.photo_url = tempUser?.photo
+    ? `${process.env.APP_URL}/uploads/profiles/${user?.photo}`
+    : null;
+
   return res.status(200).json({
     success: true,
     message: "Get user successfully",

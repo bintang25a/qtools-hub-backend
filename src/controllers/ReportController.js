@@ -186,10 +186,20 @@ export const show = async (req, res) => {
       });
     }
 
+    const reportJson = report.toJSON();
+
+    reportJson.evidence1_url = report.evidence1
+      ? `${process.env.APP_URL}/uploads/evidences/${report.evidence1}`
+      : null;
+
+    reportJson.evidence2_url = report.evidence2
+      ? `${process.env.APP_URL}/uploads/evidences/${report.evidence2}`
+      : null;
+
     res.status(200).json({
       success: true,
       message: "Display report successfully",
-      data: report,
+      data: reportJson,
     });
   } catch (error) {
     console.log(error.message);

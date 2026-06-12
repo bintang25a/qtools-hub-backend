@@ -94,6 +94,12 @@ export const show = async (req, res) => {
       });
     }
 
+    const userJson = user.toJSON();
+
+    userJson.photo_url = user?.photo
+      ? `${process.env.APP_URL}/uploads/profiles/${user?.photo}`
+      : null;
+
     res.status(200).json({
       success: true,
       message: "Display user successfully",

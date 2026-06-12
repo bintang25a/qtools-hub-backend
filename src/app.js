@@ -1,4 +1,5 @@
 import express from "express";
+import path from "path";
 import cors from "./config/cors.js";
 import { createServer } from "http";
 import { Server } from "socket.io";
@@ -59,5 +60,11 @@ app.use("/api/repairs", RepairRoute);
 app.use("/api/reports", ReportRoute);
 app.use("/api/transactions", TransactionRoute);
 app.use("/api/actions", ActionRoute);
+
+const evidencePath = path.join(process.cwd(), "public", "evidences");
+const profilePath = path.join(process.cwd(), "public", "profiles");
+
+app.use("/uploads/evidences", express.static(evidencePath));
+app.use("/uploads/profiles", express.static(profilePath));
 
 export default httpServer;
