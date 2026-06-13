@@ -185,6 +185,16 @@ export const update = async (req, res) => {
     });
   }
 
+  const denied =
+    (req.role !== "planner" || req.role !== "tool keeper") && req.nrp !== nrp;
+
+  if (denied) {
+    return res.status(403).json({
+      success: false,
+      message: "Update user failed, Access Denied",
+    });
+  }
+
   const { name, role, password, section } = req.body;
 
   const user = await User.findByPk(nrp, {});

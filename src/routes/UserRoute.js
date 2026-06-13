@@ -17,12 +17,13 @@ const router = express.Router({ mergeParams: true });
 
 router.use(verifyUser);
 router.get("/", index);
+router.patch("/:nrp", uploadPhoto.single("photo"), update);
+
 router.use(toolKeeperOnly);
 router.get("/:nrp", show);
 
 router.use(plannerOnly);
 router.post("/", uploadPhoto.single("photo"), store);
-router.patch("/:nrp", uploadPhoto.single("photo"), update);
 router.delete("/:nrp", destroy);
 
 export default router;

@@ -142,7 +142,7 @@ export const show = async (req, res) => {
         {
           association: Report.associations.reporter,
           as: "reporter",
-          attributes: ["name"],
+          attributes: ["name", "section"],
         },
         {
           association: Report.associations.groupLeader,
