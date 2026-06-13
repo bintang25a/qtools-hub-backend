@@ -5,6 +5,9 @@ import {
   Transaction,
   Repair,
   Report,
+  Tool,
+  Inspection,
+  ToolInspection,
 } from "../models/Model.js";
 
 const migration = async () => {
@@ -18,6 +21,9 @@ const migration = async () => {
     transactions: Transaction,
     repairs: Repair,
     reports: Report,
+    tools: Tool,
+    inspections: Inspection,
+    tool_inspection: ToolInspection,
   };
 
   try {

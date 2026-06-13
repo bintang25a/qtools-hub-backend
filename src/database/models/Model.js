@@ -1,9 +1,12 @@
 import db from "../../config/database.js";
 import User from "./User.js";
 import Transaction from "./Transaction.js";
+import Inspection from "./Inspections.js";
 import Asset from "./Asset.js";
 import Repair from "./Repair.js";
 import Report from "./Report.js";
+import Tool from "./Tool.js";
+import ToolInspection from "./ToolInspection.js";
 import { DataTypes } from "sequelize";
 
 User.hasMany(Transaction, {
@@ -95,4 +98,16 @@ const Token = db.define("tokens", {
   },
 });
 
-export { db, User, Asset, Transaction, Repair, Report, Token, Setting };
+export {
+  db,
+  User,
+  Asset,
+  Transaction,
+  Repair,
+  Report,
+  Tool,
+  Inspection,
+  ToolInspection,
+  Token,
+  Setting,
+};
